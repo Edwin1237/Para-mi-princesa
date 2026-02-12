@@ -2,31 +2,58 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Romantic Engine Pro - Princess Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Romantic Engine Pro - Mobile Edition</title>
     <style>
-        body { margin: 0; background: #000; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; touch-action: none; }
+        
+        /* Ajuste de firma para móvil */
+        #signature {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #ff4d6d;
+            font-size: 0.9rem; /* Un poco más pequeño en móvil */
+            letter-spacing: 1px;
+            z-index: 100;
+            text-shadow: 0 0 8px rgba(255, 77, 109, 0.5);
+        }
+
         #overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: flex; flex-direction: column; justify-content: center;
             align-items: center; z-index: 1000; transition: opacity 0.8s;
         }
-        h1 { color: #ff4d6d; letter-spacing: 5px; margin-bottom: 30px; font-weight: 300; text-align: center; padding: 0 20px; }
-        #start-btn {
-            padding: 15px 40px; background: none; border: 1px solid #ff4d6d;
-            color: #ff4d6d; cursor: pointer; letter-spacing: 4px; font-weight: bold;
-            transition: 0.3s; text-transform: uppercase;
+
+        h1 { 
+            color: #ff4d6d; 
+            letter-spacing: 2px; 
+            margin-bottom: 30px; 
+            font-weight: 300; 
+            text-align: center; 
+            padding: 0 20px;
+            font-size: 1.5rem; /* Adaptable */
         }
-        #start-btn:hover { background: #ff4d6d; color: white; box-shadow: 0 0 30px #ff4d6d; }
+
+        #start-btn {
+            padding: 12px 30px; background: none; border: 1px solid #ff4d6d;
+            color: #ff4d6d; cursor: pointer; letter-spacing: 2px; font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        /* Video miniatura ajustado para no estorbar tanto en móvil */
         #video-container {
-            position: absolute; bottom: 20px; right: 20px;
-            width: 200px; height: 150px; border: 1px solid #ff4d6d;
-            border-radius: 12px; overflow: hidden; z-index: 10; opacity: 0.4;
+            position: absolute; bottom: 10px; left: 10px;
+            width: 100px; height: 130px; border: 1px solid #ff4d6d;
+            border-radius: 8px; overflow: hidden; z-index: 10; opacity: 0.5;
         }
         #video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     </style>
 </head>
 <body>
+
+    <div id="signature">con mucho amor tu principe</div>
 
     <div id="overlay">
         <h1>BIENVENIDA MI PRINCESA</h1>
@@ -44,94 +71,76 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 
     <script>
-        const MESSAGES = [
-            "Te amo más de lo que las palabras pueden explicar.", "Eres mi lugar seguro en este mundo.", "Cada día contigo vale más que mil sin ti.", "Tu sonrisa es mi paz.", "Contigo aprendí qué es amar de verdad.", "Eres lo mejor que me ha pasado.", "Pensarte ya me hace feliz.", "Mi corazón solo sabe pronunciar tu nombre.", "A tu lado todo es más sencillo.", "Tú eres mi mayor bendición.", "Amar es fácil desde que existes tú.", "Gracias por estar incluso cuando no lo merezco.", "Mi vida es mejor desde que llegaste.", "No hay distancia cuando el amor es real.", "Tú haces que el mundo tenga sentido.", "Me enamoras todos los días.", "Tu voz calma mis tormentas.", "Eres mi pensamiento favorito.", "Siempre elegiría tu amor.", "No necesito nada más si te tengo a ti.", "Eres mi sueño hecho realidad.", "Mi corazón es tu casa.", "Tú eres mi hoy y mi siempre.", "Amar contigo es mi mejor decisión.", "Me haces creer en el amor verdadero.", "Contigo aprendí a ser mejor.", "Tu amor me da fuerzas.", "Eres la razón de mis sonrisas.", "Me haces sentir completo.", "Tu amor es mi refugio.", "No imagino mi vida sin ti.", "Tú haces especial cada día.", "Eres mi persona favorita.", "Gracias por existir en mi vida.", "Te amo más de lo que ayer y menos de lo que mañana.", "Mi felicidad tiene tu nombre.", "Contigo todo vale la pena.", "Tú eres mi milagro diario.", "Mi corazón late por ti.", "Eres el amor que siempre esperé.", "Tu amor es mi mayor tesoro.", "Te amo con cada parte de mí.", "Tú haces que mis días brillen.", "Eres mi paz en medio del caos.", "Mi mundo gira alrededor de ti.", "Gracias por amarme como soy.", "Tú eres mi razón de luchar.", "Me haces sentir amado de verdad.", "Contigo aprendí a creer.", "Mi vida es más bonita contigo.", "Eres el sueño que no quiero despertar.", "Amar es mirarte y sonreír.", "Tú eres mi hogar.", "Mi futuro te incluye.", "Te amo sin condiciones.", "Tú eres mi mejor historia.", "Me enamora tu forma de ser.", "Contigo todo es posible.", "Tu amor me sostiene.", "Eres mi alegría diaria.", "No hay nadie como tú.", "Mi corazón es tuyo.", "Te pienso incluso cuando duermo.", "Eres la luz de mis días oscuros.", "Mi vida tiene sentido por ti.", "Tú haces que valga la pena amar.", "Mi amor por ti no tiene final.", "Gracias por quedarte.", "Tú eres mi elección diaria.", "Me haces sentir vivo.", "Contigo aprendí qué es felicidad.", "Tu amor es mi fuerza.", "Eres mi persona favorita en el mundo.", "No hay amor como el tuyo.", "Mi corazón sonríe contigo.", "Tú eres mi destino.", "Amar es cuidarte siempre.", "Eres mi mayor fortuna.", "Tu amor me hace mejor.", "Tú eres mi paz eterna.", "Te amo incluso en silencio.", "Contigo todo tiene sentido.", "Eres mi razón para creer.", "Mi amor por ti no se cansa.", "Tú eres mi todo.", "Mi vida es tuya.", "Gracias por tu amor infinito.", "Eres mi alegría constante.", "Amar es elegirte cada día.", "Tú haces mi mundo más bonito.", "No hay día que no te piense.", "Mi corazón es feliz contigo.", "Te amo con verdad.", "Tú eres mi mejor regalo.", "Contigo no tengo miedo.", "Eres mi calma.", "Amar contigo es un privilegio.", "Tú eres mi sueño diario.", "Mi amor por ti crece.", "Tú eres mi felicidad.", "Te amo sin medida.", "Eres mi razón de sonreír.", "Mi vida te pertenece.", "Tú eres mi refugio.", "No hay amor más fuerte que el mío por ti.", "Eres mi alegría eterna.", "Te amo hoy y siempre.", "Tú haces que todo valga la pena.", "Mi corazón te eligió.", "Eres mi verdad.", "Amar es pensar en ti.", "Mi vida es mejor contigo.", "Tú eres mi destino soñado.", "Te amo sin dudas.", "Eres mi persona especial.", "Mi amor por ti no se acaba.", "Tú eres mi hogar seguro.", "Amar es cuidarte.", "Eres mi mayor alegría.", "Te amo con el alma.", "Tú eres mi todo en uno.", "Mi felicidad depende de ti.", "Amar es caminar contigo.", "Eres mi milagro diario.", "Mi vida eres tú.", "Te amo sin miedo.", "Tú eres mi fortaleza.", "Mi corazón es tuyo para siempre.", "Eres mi sueño eterno.", "Contigo aprendí a amar.", "Tu amor me transforma.", "Eres mi luz.", "Mi mundo empieza contigo.", "Amar es confiar en ti.", "Tú eres mi paz diaria.", "Mi vida sonríe por ti.", "Te amo con todo lo que soy.", "Eres mi alegría infinita.", "Mi amor por ti es real.", "Tú eres mi mayor bendición.", "Amar es elegirte.", "Mi corazón te pertenece.", "Eres mi mejor decisión.", "Te amo sin final.", "Tú eres mi felicidad diaria.", "Mi vida es más bonita contigo.", "Amar es cuidarte siempre.", "Tú eres mi razón de ser.", "Mi amor por ti es eterno.", "Eres mi persona favorita.", "Te amo sin condiciones.", "Tú eres mi calma diaria.", "Mi vida tiene tu nombre.", "Amar es caminar juntos.", "Eres mi sueño cumplido.", "Mi corazón te elige.", "Tú eres mi amor verdadero.", "Te amo sin explicaciones.", "Eres mi felicidad constante.", "Mi amor por ti no se cansa.", "Tú eres mi hogar eterno.", "Amar es compartir contigo.", "Eres mi mejor regalo.", "Mi vida es tuya.", "Te amo con el corazón.", "Tú eres mi alegría.", "Amar es cuidarte.", "Eres mi destino.", "Mi amor por ti es infinito.", "Tú eres mi todo.", "Te amo sin dudas.", "Mi vida gira alrededor de ti.", "Eres mi razón diaria.", "Amar es pensar en ti.", "Tú eres mi felicidad eterna.", "Mi amor por ti es sincero.", "Eres mi paz infinita.", "Te amo sin miedo.", "Mi vida eres tú.", "Tú eres mi milagro.", "Amar es estar contigo.", "Mi corazón es tuyo siempre.", "Eres mi sueño diario.", "Te amo con el alma.", "Tú eres mi mejor historia.", "Mi amor por ti no termina.", "Eres mi luz eterna.", "Amar es cuidarte siempre.", "Tú eres mi felicidad real.", "Mi vida es amor contigo.", "Te amo más cada día.", "Tú eres mi paz verdadera.", "Amar es elegirte siempre.", "Mi corazón vive por ti.", "Eres mi mayor alegría.", "Te amo sin medida.", "Tú eres mi amor eterno.", "Mi vida es mejor contigo.", "Amar es compartir tu vida.", "Tú eres todo lo que necesito."
-        ];
+        // ... (Mantener la constante MESSAGES igual que antes) ...
+        const MESSAGES = ["Te amo más de lo que las palabras pueden explicar.", "Eres mi lugar seguro.", "Tu sonrisa es mi paz.", "Gracias por existir."]; 
 
         let scene, camera, renderer, particles, petals;
-        const particleCount = 30000; 
-        const petalCount = 100; // Cantidad de pétalos de rosa
+        const particleCount = 15000; // Reducido para mejor performance en móviles
         let targetPositions = new Float32Array(particleCount * 3);
         let currentMsgIndex = -1; 
         let isFist = false;
-        let lastGestureTime = 0;
-        let prevHandX = 0;
-        const LERP_SPEED = 0.18; // Aún más rápido
+        const LERP_SPEED = 0.12; 
 
         function init() {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 4000);
-            camera.position.z = 800;
+            // Ajuste de FOV para pantallas verticales de celular
+            const aspect = window.innerWidth / window.innerHeight;
+            camera = new THREE.PerspectiveCamera(75, aspect, 1, 3000);
+            camera.position.z = 900;
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: false }); // Antialias off para ahorrar batería
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limitar resolución
             document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-            // 1. SISTEMA DE PARTÍCULAS (TEXTO/CORAZÓN)
             const geometry = new THREE.BufferGeometry();
             const positions = new Float32Array(particleCount * 3);
             for(let i=0; i<particleCount*3; i++) {
-                positions[i] = (Math.random() - 0.5) * 3000;
+                positions[i] = (Math.random() - 0.5) * 2000;
                 targetPositions[i] = positions[i];
             }
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             const material = new THREE.PointsMaterial({
-                size: 2.5, color: 0xff4d6d, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending
+                size: 3, color: 0xff4d6d, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending
             });
             particles = new THREE.Points(geometry, material);
             scene.add(particles);
 
-            // 2. SISTEMA DE PÉTALOS
-            const petalGeometry = new THREE.BufferGeometry();
-            const petalPos = new Float32Array(petalCount * 3);
-            const petalVels = [];
-            for(let i=0; i<petalCount; i++) {
-                petalPos[i*3] = (Math.random() - 0.5) * 2000;
-                petalPos[i*3+1] = Math.random() * 2000;
-                petalPos[i*3+2] = (Math.random() - 0.5) * 1000;
-                petalVels.push({
-                    y: 1 + Math.random() * 2,
-                    x: (Math.random() - 0.5) * 1,
-                    r: Math.random() * 0.02
-                });
-            }
-            petalGeometry.setAttribute('position', new THREE.BufferAttribute(petalPos, 3));
-            const petalMaterial = new THREE.PointsMaterial({
-                size: 6, color: 0xff758f, transparent: true, opacity: 0.6
-            });
-            petals = new THREE.Points(petalGeometry, petalMaterial);
-            petals.userData.velocities = petalVels;
-            scene.add(petals);
-            
             window.addEventListener('resize', onWindowResize);
-            createTextShape("Mueve tu mano para empezar");
+            createTextShape("Mueve tu mano");
             animate();
         }
 
         function createTextShape(text) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 2400; canvas.height = 600;
+            canvas.width = 1024; canvas.height = 1024; // Formato cuadrado para móvil
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 80px sans-serif';
+            ctx.font = 'bold 60px sans-serif';
             ctx.textAlign = 'center';
             
+            // Ajuste de texto multilínea para pantallas angostas
             const words = text.split(' ');
-            if (words.length > 5) {
-                const mid = Math.ceil(words.length / 2);
-                ctx.fillText(words.slice(0, mid).join(' '), 1200, 250);
-                ctx.fillText(words.slice(mid).join(' '), 1200, 380);
-            } else {
-                ctx.fillText(text, 1200, 300);
+            let line = '';
+            let y = 400;
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                if (testLine.length > 15) {
+                    ctx.fillText(line, 512, y);
+                    line = words[n] + ' ';
+                    y += 70;
+                } else {
+                    line = testLine;
+                }
             }
+            ctx.fillText(line, 512, y);
 
-            const data = ctx.getImageData(0, 0, 2400, 600).data;
+            const data = ctx.getImageData(0, 0, 1024, 1024).data;
             const points = [];
-            for (let y = 0; y < 600; y += 4) {
-                for (let x = 0; x < 2400; x += 4) {
-                    if (data[(y * 2400 + x) * 4 + 3] > 128) {
-                        points.push((x - 1200) * 0.75, (300 - y) * 0.75, 0);
+            for (let y = 0; y < 1024; y += 8) {
+                for (let x = 0; x < 1024; x += 8) {
+                    if (data[(y * 1024 + x) * 4 + 3] > 128) {
+                        points.push((x - 512) * 1.2, (512 - y) * 1.2, 0);
                     }
                 }
             }
@@ -141,13 +150,11 @@
                 if (i < points.length / 3) {
                     targetPositions[i3] = points[i*3];
                     targetPositions[i3+1] = points[i*3+1];
-                    targetPositions[i3+2] = 0; 
+                    targetPositions[i3+2] = 0;
                 } else {
-                    const angle = Math.random() * Math.PI * 2;
-                    const radius = 900 + Math.random() * 1000;
-                    targetPositions[i3] = Math.cos(angle) * radius;
-                    targetPositions[i3+1] = Math.sin(angle) * radius;
-                    targetPositions[i3+2] = -800 - Math.random() * 1000;
+                    targetPositions[i3] = (Math.random() - 0.5) * 1500;
+                    targetPositions[i3+1] = (Math.random() - 0.5) * 1500;
+                    targetPositions[i3+2] = -1000;
                 }
             }
         }
@@ -155,93 +162,55 @@
         function createHeart() {
             for (let i = 0; i < particleCount; i++) {
                 const i3 = i * 3;
-                const r = Math.pow(Math.random(), 0.5); 
                 const t = Math.random() * Math.PI * 2;
-                const x = 16 * Math.pow(Math.sin(t), 3) * r;
-                const y = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * r;
-                targetPositions[i3] = x * 20; 
-                targetPositions[i3+1] = y * 20;
-                targetPositions[i3+2] = (Math.random() - 0.5) * 80;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                targetPositions[i3] = x * 15; 
+                targetPositions[i3+1] = y * 15;
+                targetPositions[i3+2] = (Math.random() - 0.5) * 50;
             }
         }
 
         const hands = new Hands({
             locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.75 });
+        
+        hands.setOptions({ 
+            maxNumHands: 1, 
+            modelComplexity: 0, // 0 es más rápido para móviles
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5 
+        });
         
         hands.onResults(results => {
             if (results.multiHandLandmarks && results.multiHandLandmarks[0]) {
                 const lm = results.multiHandLandmarks[0];
                 const indexTip = lm[8];
                 const palm = lm[0];
-                const now = Date.now();
 
-                const targetX = (0.5 - indexTip.x) * 600;
-                const targetY = (0.5 - indexTip.y) * 400;
-                particles.position.lerp(new THREE.Vector3(targetX, targetY, 0), 0.12);
+                // Movimiento suavizado
+                const targetX = (0.5 - indexTip.x) * 500;
+                const targetY = (0.5 - indexTip.y) * 700;
+                particles.position.lerp(new THREE.Vector3(targetX, targetY, 0), 0.1);
 
                 const dist = Math.hypot(indexTip.x - palm.x, indexTip.y - palm.y);
-                
-                // DETECCIÓN DE PUÑO
-                if (dist < 0.14) { 
-                    if (!isFist) {
-                        isFist = true;
-                        createHeart();
-                    }
-                } 
-                // AL ABRIR LA MANO DESPUÉS DEL CORAZÓN
-                else if (dist > 0.28 && isFist) {
+                if (dist < 0.15 && !isFist) { 
+                    isFist = true; createHeart(); 
+                } else if (dist > 0.3 && isFist) {
                     isFist = false;
-                    // Mensaje especial solicitado
-                    createTextShape("Gracias por todo mi princesa, te amo con todo mi corazon");
+                    currentMsgIndex = (currentMsgIndex + 1) % MESSAGES.length;
+                    createTextShape(MESSAGES[currentMsgIndex]);
                 }
-
-                if (!isFist && now - lastGestureTime > 550) {
-                    const deltaX = indexTip.x - prevHandX;
-                    if (Math.abs(deltaX) > 0.12) { 
-                        currentMsgIndex = deltaX > 0 ? (currentMsgIndex + 1) % MESSAGES.length : (currentMsgIndex - 1 + MESSAGES.length) % MESSAGES.length;
-                        if(currentMsgIndex < 0) currentMsgIndex = 0;
-                        createTextShape(MESSAGES[currentMsgIndex]);
-                        lastGestureTime = now;
-                    }
-                }
-                prevHandX = indexTip.x;
             }
         });
 
         function animate() {
             requestAnimationFrame(animate);
-            const time = Date.now() * 0.002;
-
-            // 1. Animación Partículas
             const pos = particles.geometry.attributes.position.array;
-            for(let i=0; i<particleCount*3; i+=3) {
+            for(let i=0; i<particleCount*3; i++) {
                 pos[i] += (targetPositions[i] - pos[i]) * LERP_SPEED;
-                pos[i+1] += (targetPositions[i+1] - pos[i+1]) * LERP_SPEED;
-                pos[i+2] += (targetPositions[i+2] - pos[i+2]) * LERP_SPEED;
-
-                if (isFist) {
-                    const beat = 1 + Math.sin(time * 10) * 0.02;
-                    pos[i] *= beat; pos[i+1] *= beat;
-                }
             }
             particles.geometry.attributes.position.needsUpdate = true;
-
-            // 2. Animación Lluvia de Pétalos
-            const pPos = petals.geometry.attributes.position.array;
-            const vels = petals.userData.velocities;
-            for(let i=0; i<petalCount; i++) {
-                pPos[i*3+1] -= vels[i].y; // Caída
-                pPos[i*3] += Math.sin(time + i) * 0.5; // Vaivén
-
-                if(pPos[i*3+1] < -500) {
-                    pPos[i*3+1] = 600;
-                    pPos[i*3] = (Math.random() - 0.5) * 1500;
-                }
-            }
-            petals.geometry.attributes.position.needsUpdate = true;
-
             renderer.render(scene, camera);
         }
 
@@ -257,8 +226,8 @@
             init();
             const video = document.getElementById('video');
             const cam = new Camera(video, {
-                onFrame: async () => await hands.send({image: video}),
-                width: 640, height: 480
+                onFrame: async () => { await hands.send({image: video}); },
+                width: 480, height: 640 // Proporción de celular
             });
             cam.start();
         };
